@@ -6,8 +6,8 @@
   <title>BelaVista - Vendas</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#373928">
-  <link rel="icon" href="icone.png">
-  <link rel="apple-touch-icon" href="icone.png">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,8 +60,9 @@
     .val-entrada { color: var(--success) !important; }
     .val-saida { color: var(--danger) !important; }
     .chart-container { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 32px; position: relative; height: 250px; width: 100%; }
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--surface); padding: 6px; border-radius: 16px; box-shadow: var(--shadow); overflow-x: auto; }
-    .tab-btn { flex: 1; padding: 12px 20px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 14px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--surface); padding: 6px; border-radius: 16px; box-shadow: var(--shadow); overflow-x: auto; scrollbar-width: none;}
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { flex: 1; padding: 12px 16px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 14px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
     .tab-btn.active { background: var(--olive-light); color: white; }
     .tab-content { display: none; animation: fadeIn 0.3s ease; }
     .tab-content.active { display: block; }
@@ -70,8 +71,8 @@
     .input-wrapper { display: flex; flex-direction: column; gap: 6px; }
     .full-width { grid-column: 1 / -1; }
     label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
-    input, select { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); font-size: 15px; outline: none; }
-    input:focus, select:focus { border-color: var(--olive-light); box-shadow: 0 0 0 3px rgba(143, 149, 105, 0.2); }
+    input, select, textarea { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); font-size: 15px; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--olive-light); box-shadow: 0 0 0 3px rgba(143, 149, 105, 0.2); }
     button.btn-primary { background: var(--olive-dark); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; box-shadow: var(--shadow); }
     button.btn-primary:hover { background: var(--olive-light); }
     .history-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
@@ -90,7 +91,7 @@
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-style: italic; }
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { background: var(--surface); width: 90%; max-width: 500px; border-radius: 16px; padding: 24px; transform: translateY(-20px); transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .modal-content { background: var(--surface); width: 90%; max-width: 500px; border-radius: 16px; padding: 24px; transform: translateY(-20px); transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;}
     .modal-overlay.active .modal-content { transform: translateY(0); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-header h2 { font-size: 20px; color: var(--text-main); }
@@ -139,7 +140,7 @@
         <div class="card-value val-saida" id="resumo-saidas">R$ 0,00</div>
       </div>
       <div class="card">
-        <div class="card-title">Lucro Líquido</div>
+        <div class="card-title" id="titulo-lucro">Lucro Total</div>
         <div class="card-value" id="resumo-lucro">R$ 0,00</div>
       </div>
     </div>
@@ -151,6 +152,8 @@
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('tab-registrar')">Registrar</button>
       <button class="tab-btn" onclick="switchTab('tab-historico')">Histórico</button>
+      <button class="tab-btn" onclick="switchTab('tab-clientes')">Clientes</button>
+      <button class="tab-btn" onclick="switchTab('tab-config')">Ajustes</button>
     </div>
 
     <div id="tab-registrar" class="tab-content active">
@@ -163,20 +166,29 @@
           </select>
         </div>
 
+        <div class="input-wrapper wrap-cliente full-width">
+          <label for="cliente-mov">Cliente</label>
+          <select id="cliente-mov" name="clienteId">
+            <option value="">Venda Avulsa (Nenhum cliente)</option>
+          </select>
+        </div>
+
         <div class="input-wrapper wrap-categoria hidden">
           <label for="categoria-mov">Categoria</label>
-          <select id="categoria-mov" name="categoria">
+          <select id="categoria-mov" name="categoria" onchange="checkCustomCategory('registro')">
             <option value="" disabled selected>Selecione...</option>
             <option value="Ração">Ração</option>
             <option value="Embalagem">Embalagem</option>
             <option value="Transporte">Transporte</option>
             <option value="Outros">Outros</option>
+            <option value="nova">+ Nova Categoria...</option>
           </select>
+          <input type="text" id="nova-categoria-mov" class="hidden" placeholder="Digite o nome da categoria" style="margin-top: 8px;">
         </div>
 
         <div class="input-wrapper full-width">
           <label for="descricao">Descrição</label>
-          <input type="text" id="descricao" name="descricao" placeholder="Ex: Venda para Mercado Z" required>
+          <input type="text" id="descricao" name="descricao" placeholder="Ex: Venda 30 dúzias" required>
         </div>
 
         <div class="input-wrapper wrap-quantidade">
@@ -202,7 +214,47 @@
 
     <div id="tab-historico" class="tab-content">
       <ul class="history-list" id="lista-historico"></ul>
-      <div id="empty-state" class="empty-state" style="display:none;">Nenhuma movimentação para o período selecionado.</div>
+      <div id="empty-state" class="empty-state" style="display:none;">Nenhuma movimentação para o período.</div>
+    </div>
+
+    <div id="tab-clientes" class="tab-content">
+      <form id="form-cliente" class="form-group" style="margin-bottom: 24px;" onsubmit="addCliente(event)">
+        <div class="input-wrapper full-width">
+          <label>Nome do Cliente</label>
+          <input type="text" id="cliente-nome" placeholder="Nome completo ou Empresa" required>
+        </div>
+        <div class="input-wrapper">
+          <label>Telefone</label>
+          <input type="text" id="cliente-telefone" placeholder="(00) 00000-0000">
+        </div>
+        <div class="input-wrapper">
+          <label>Observação</label>
+          <input type="text" id="cliente-obs" placeholder="Detalhes opcionais">
+        </div>
+        <div class="full-width">
+          <button type="submit" class="btn-primary">Cadastrar Cliente</button>
+        </div>
+      </form>
+      <h3 style="margin-bottom: 12px; font-size: 16px;">Meus Clientes</h3>
+      <ul class="history-list" id="lista-clientes"></ul>
+      <div id="empty-clientes" class="empty-state" style="display:none;">Nenhum cliente cadastrado.</div>
+    </div>
+
+    <div id="tab-config" class="tab-content">
+      <div class="form-group" style="display: flex; flex-direction: column; gap: 24px;">
+        <div>
+          <h3 style="margin-bottom: 8px; color: var(--text-main);">Exportar Dados</h3>
+          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Baixe um arquivo JSON com todo o seu histórico para salvar de forma segura.</p>
+          <button class="btn-primary" onclick="exportBackup()">Exportar backup.json</button>
+        </div>
+        <hr style="border: 0; height: 1px; background: var(--border);">
+        <div>
+          <h3 style="margin-bottom: 8px; color: var(--text-main);">Restaurar Dados</h3>
+          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Selecione um arquivo de backup para recuperar suas informações.</p>
+          <input type="file" id="import-file" accept=".json" style="width: 100%; margin-bottom: 16px; background: var(--surface);">
+          <button class="btn-primary" style="background: var(--olive-light);" onclick="importBackup()">Restaurar Backup</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -222,14 +274,23 @@
           </select>
         </div>
 
+        <div class="input-wrapper wrap-cliente">
+          <label>Cliente</label>
+          <select id="edit-cliente-mov" name="clienteId">
+            <option value="">Venda Avulsa (Nenhum cliente)</option>
+          </select>
+        </div>
+
         <div class="input-wrapper wrap-categoria hidden">
           <label>Categoria</label>
-          <select id="edit-categoria" name="categoria">
+          <select id="edit-categoria" name="categoria" onchange="checkCustomCategory('edit')">
             <option value="Ração">Ração</option>
             <option value="Embalagem">Embalagem</option>
             <option value="Transporte">Transporte</option>
             <option value="Outros">Outros</option>
+            <option value="nova">+ Nova Categoria...</option>
           </select>
+          <input type="text" id="edit-nova-categoria" class="hidden" placeholder="Digite o nome da categoria" style="margin-top: 8px;">
         </div>
 
         <div class="input-wrapper">
@@ -269,11 +330,48 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-editar-cliente">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Editar Cliente</h2>
+        <button class="btn-close" onclick="closeModal('modal-editar-cliente')">&times;</button>
+      </div>
+      <form id="form-edit-cliente" class="form-group" style="padding:0; border:none; box-shadow:none; grid-template-columns: 1fr;" onsubmit="saveEditCliente(event)">
+        <input type="hidden" id="edit-cliente-id">
+        <div class="input-wrapper">
+          <label>Nome do Cliente</label>
+          <input type="text" id="edit-cliente-nome" required>
+        </div>
+        <div class="input-wrapper">
+          <label>Telefone</label>
+          <input type="text" id="edit-cliente-telefone">
+        </div>
+        <div class="input-wrapper">
+          <label>Observação</label>
+          <input type="text" id="edit-cliente-obs">
+        </div>
+        <button type="submit" class="btn-primary">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-excluir-cliente">
+    <div class="modal-content" style="max-width: 350px; text-align: center;">
+      <h3 style="margin-bottom: 10px;">Excluir Cliente?</h3>
+      <p style="color: var(--text-muted); font-size: 14px;">As vendas feitas para este cliente não serão apagadas, mas perderão a identificação do nome.</p>
+      <input type="hidden" id="delete-cliente-id">
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-excluir-cliente')">Cancelar</button>
+        <button class="btn-primary" style="background: var(--danger);" onclick="confirmDeleteCliente()">Excluir</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-container"></div>
 
   <script>
     const STORAGE_KEY = 'bela-vista-dados';
-    let dados = { movimentacoes: [] };
+    let dados = { movimentacoes: [], clientes: [] };
     let chartInstance = null;
 
     function applyCurrencyMask() {
@@ -301,7 +399,6 @@
       toast.className = `toast ${type}`;
       toast.textContent = message;
       container.appendChild(toast);
-      
       setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease forwards';
         setTimeout(() => toast.remove(), 300);
@@ -313,6 +410,61 @@
     function formatBRL(val) { return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
     function formatDateBr(dateStr) { return dateStr ? dateStr.split('-').reverse().join('/') : ''; }
 
+    function updateCategoryDropdowns() {
+      const defaultCats = ['Ração', 'Embalagem', 'Transporte', 'Outros'];
+      const customCats = new Set();
+      
+      dados.movimentacoes.forEach(m => {
+        if (m.tipo === 'saida' && m.categoria && !defaultCats.includes(m.categoria)) {
+          customCats.add(m.categoria);
+        }
+      });
+
+      const optsHTML = '<option value="" disabled selected>Selecione...</option>' + 
+        defaultCats.map(c => `<option value="${c}">${c}</option>`).join('') + 
+        (customCats.size > 0 ? '<optgroup label="Personalizadas">' + Array.from(customCats).map(c => `<option value="${c}">${c}</option>`).join('') + '</optgroup>' : '') + 
+        '<option value="nova">+ Nova Categoria...</option>';
+
+      ['categoria-mov', 'edit-categoria'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          const val = el.value;
+          el.innerHTML = optsHTML;
+          if (Array.from(el.options).some(o => o.value === val)) el.value = val;
+        }
+      });
+    }
+
+    function populateClienteDropdowns() {
+      const optsHTML = '<option value="">Venda Avulsa (Nenhum cliente)</option>' + 
+        dados.clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+      
+      ['cliente-mov', 'edit-cliente-mov'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          const val = el.value;
+          el.innerHTML = optsHTML;
+          if (Array.from(el.options).some(o => o.value === val)) el.value = val;
+        }
+      });
+    }
+
+    function checkCustomCategory(mode) {
+      const selectId = mode === 'registro' ? 'categoria-mov' : 'edit-categoria';
+      const inputId = mode === 'registro' ? 'nova-categoria-mov' : 'edit-nova-categoria';
+      const select = document.getElementById(selectId);
+      const input = document.getElementById(inputId);
+      
+      if (select && select.value === 'nova') {
+        input.classList.remove('hidden');
+        input.required = true;
+      } else if (input) {
+        input.classList.add('hidden');
+        input.required = false;
+        input.value = '';
+      }
+    }
+
     function toggleFormFields(formId) {
       const form = document.getElementById(formId);
       const tipo = form.querySelector('[name="tipo"]').value;
@@ -320,17 +472,24 @@
       const inputQtd = form.querySelector('[name="quantidade"]');
       const wrapCat = form.querySelector('.wrap-categoria');
       const selectCat = form.querySelector('[name="categoria"]');
+      const wrapCliente = form.querySelector('.wrap-cliente');
 
       if (tipo === 'entrada') {
-        wrapQtd.classList.remove('hidden');
-        if(inputQtd) inputQtd.required = true;
-        wrapCat.classList.add('hidden');
-        if(selectCat) selectCat.required = false;
+        wrapQtd.classList.remove('hidden'); if(inputQtd) inputQtd.required = true;
+        wrapCat.classList.add('hidden'); if(selectCat) selectCat.required = false;
+        if(wrapCliente) wrapCliente.classList.remove('hidden');
+        
+        const novaReg = document.getElementById('nova-categoria-mov');
+        const novaEdi = document.getElementById('edit-nova-categoria');
+        if(novaReg) { novaReg.classList.add('hidden'); novaReg.required = false; }
+        if(novaEdi) { novaEdi.classList.add('hidden'); novaEdi.required = false; }
       } else {
-        wrapQtd.classList.add('hidden');
-        if(inputQtd) inputQtd.required = false;
-        wrapCat.classList.remove('hidden');
-        if(selectCat) selectCat.required = true;
+        wrapQtd.classList.add('hidden'); if(inputQtd) inputQtd.required = false;
+        wrapCat.classList.remove('hidden'); if(selectCat) selectCat.required = true;
+        if(wrapCliente) { wrapCliente.classList.add('hidden'); form.querySelector('[name="clienteId"]').value = ""; }
+        
+        if (formId === 'form-registro') checkCustomCategory('registro');
+        if (formId === 'form-edit') checkCustomCategory('edit');
       }
     }
 
@@ -339,11 +498,9 @@
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       html.setAttribute('data-theme', newTheme);
-      
       document.getElementById('icon-sun').classList.toggle('hidden', newTheme === 'light');
       document.getElementById('icon-moon').classList.toggle('hidden', newTheme === 'dark');
       localStorage.setItem('bela-vista-theme', newTheme);
-      
       if (chartInstance) renderChart(); 
     }
 
@@ -364,26 +521,30 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) dados = JSON.parse(raw);
         if(!dados.movimentacoes) dados.movimentacoes = [];
-      } catch (e) { dados = { movimentacoes: [] }; }
+        if(!dados.clientes) dados.clientes = [];
+      } catch (e) { dados = { movimentacoes: [], clientes: [] }; }
       
+      updateCategoryDropdowns();
+      populateClienteDropdowns();
       populateMonthFilter();
       renderAll();
+      renderClientes();
     }
 
     function saveData() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+      updateCategoryDropdowns();
+      populateClienteDropdowns();
       populateMonthFilter();
     }
 
     function populateMonthFilter() {
       const select = document.getElementById('filtro-mes');
       const currentVal = select.value;
-      
       const months = new Set();
       dados.movimentacoes.forEach(m => months.add(m.data.substring(0, 7)));
       
       select.innerHTML = '<option value="todos">Todos os Meses</option>';
-      
       Array.from(months).sort().reverse().forEach(month => {
         const [yy, mm] = month.split('-');
         const nomeMes = new Date(yy, mm - 1).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
@@ -402,9 +563,14 @@
       return dados.movimentacoes.filter(m => m.data.startsWith(filter));
     }
 
+    function getClienteNome(id) {
+      if(!id) return '';
+      const c = dados.clientes.find(x => x.id === id);
+      return c ? c.nome : '';
+    }
+
     function renderAll() {
       const filtered = getFilteredData().sort((a,b) => b.data.localeCompare(a.data));
-      
       let totalEntradas = 0, totalSaidas = 0, totalOvos = 0;
       const lista = document.getElementById('lista-historico');
       lista.innerHTML = '';
@@ -425,8 +591,14 @@
           const isEntrada = item.tipo === 'entrada';
           const sinal = isEntrada ? '+' : '−';
           const classe = isEntrada ? 'entrada' : 'saida';
-          const catLabel = item.categoria ? ` • ${item.categoria}` : '';
-          const infoAdd = isEntrada ? `${item.quantidade} ovos` : `Despesa${catLabel}`;
+          
+          let infoAdd = '';
+          if(isEntrada){
+             const cliName = getClienteNome(item.clienteId);
+             infoAdd = `${item.quantidade} ovos` + (cliName ? ` • ${cliName}` : '');
+          } else {
+             infoAdd = item.categoria ? `Despesa • ${item.categoria}` : `Despesa`;
+          }
 
           const li = document.createElement('li');
           li.className = 'history-item';
@@ -452,20 +624,57 @@
       document.getElementById('resumo-entradas').textContent = formatBRL(totalEntradas);
       document.getElementById('resumo-saidas').textContent = formatBRL(totalSaidas);
       
+      const filtro = document.getElementById('filtro-mes').value;
+      const tituloLucro = document.getElementById('titulo-lucro');
+      tituloLucro.textContent = filtro === 'todos' ? 'Lucro Total' : 'Lucro do Mês';
+
       const elLucro = document.getElementById('resumo-lucro');
       elLucro.textContent = formatBRL(lucro);
       elLucro.className = `card-value ${lucro >= 0 ? 'val-entrada' : 'val-saida'}`;
 
-      renderChart(filtered);
+      renderChart(getFilteredData(true));
     }
 
-    function renderChart(filteredData) {
-      if(!filteredData) filteredData = getFilteredData();
-      const isAll = document.getElementById('filtro-mes').value === 'todos';
-      
+    function renderClientes() {
+      const lista = document.getElementById('lista-clientes');
+      lista.innerHTML = '';
+      if (dados.clientes.length === 0) {
+        document.getElementById('empty-clientes').style.display = 'block';
+      } else {
+        document.getElementById('empty-clientes').style.display = 'none';
+        
+        [...dados.clientes].reverse().forEach(cliente => {
+          const obs = cliente.observacao ? ` • ${cliente.observacao}` : '';
+          const tel = cliente.telefone ? cliente.telefone : 'Sem telefone';
+          const li = document.createElement('li');
+          li.className = 'history-item';
+          li.innerHTML = `
+            <div class="item-info">
+              <span class="item-title">${cliente.nome}</span>
+              <span class="item-meta">${tel}${obs}</span>
+            </div>
+            <div class="item-values">
+              <div class="action-btns">
+                <button class="btn-icon btn-edit" title="Editar" onclick="openEditClienteModal('${cliente.id}')">✎</button>
+                <button class="btn-icon btn-delete" title="Excluir" onclick="openDeleteClienteModal('${cliente.id}')">✕</button>
+              </div>
+            </div>
+          `;
+          lista.appendChild(li);
+        });
+      }
+    }
+
+    function renderChart(allDataForChart) {
+      let dataToChart = [...dados.movimentacoes];
+      const filter = document.getElementById('filtro-mes').value;
+      if (filter !== 'todos') {
+        dataToChart = dataToChart.filter(m => m.data.startsWith(filter));
+      }
+
       const groups = {};
-      filteredData.forEach(m => {
-        const key = isAll ? m.data.substring(0, 7) : m.data; 
+      dataToChart.forEach(m => {
+        const key = m.data.substring(0, 7); 
         if (!groups[key]) groups[key] = { rec: 0, des: 0 };
         if (m.tipo === 'entrada') groups[key].rec += m.valor;
         else groups[key].des += m.valor;
@@ -474,13 +683,12 @@
       const labels = Object.keys(groups).sort();
       const recData = labels.map(k => groups[k].rec);
       const desData = labels.map(k => groups[k].des);
+      const lucroData = labels.map(k => groups[k].rec - groups[k].des);
       
+      const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
       const chartLabels = labels.map(l => {
-        if(isAll) {
-           const [yy, mm] = l.split('-');
-           return `${mm}/${yy}`;
-        }
-        return formatDateBr(l).substring(0, 5);
+        const [yy, mm] = l.split('-');
+        return `${mesesNomes[parseInt(mm, 10) - 1]}/${yy}`;
       });
 
       const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
@@ -495,7 +703,8 @@
           labels: chartLabels,
           datasets: [
             { label: 'Receitas', data: recData, backgroundColor: '#579d71', borderRadius: 4 },
-            { label: 'Despesas', data: desData, backgroundColor: '#e67c73', borderRadius: 4 }
+            { label: 'Despesas', data: desData, backgroundColor: '#e67c73', borderRadius: 4 },
+            { label: 'Lucro', data: lucroData, backgroundColor: '#8f9569', borderRadius: 4 }
           ]
         },
         options: {
@@ -505,11 +714,7 @@
           plugins: { legend: { labels: { color: textColor } } },
           scales: {
             x: { ticks: { color: textColor }, grid: { display: false } }, 
-            y: { 
-              beginAtZero: true, 
-              ticks: { color: textColor }, 
-              grid: { color: gridColor } 
-            }
+            y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
           }
         }
       });
@@ -520,8 +725,11 @@
       const form = document.getElementById('form-registro');
       
       const tipo = form.querySelector('[name="tipo"]').value;
+      const clienteId = form.querySelector('[name="clienteId"]').value;
+      let categoria = form.querySelector('[name="categoria"]').value;
+      if (categoria === 'nova') categoria = document.getElementById('nova-categoria-mov').value.trim();
+      
       const descricao = form.querySelector('[name="descricao"]').value.trim();
-      const categoria = form.querySelector('[name="categoria"]').value;
       const quantidade = parseInt(form.querySelector('[name="quantidade"]').value, 10) || 0;
       const valorStr = form.querySelector('[name="valor"]').value;
       const data = form.querySelector('[name="data"]').value;
@@ -529,7 +737,7 @@
 
       if (valor <= 0) { showToast('Valor deve ser maior que zero.', 'error'); return; }
 
-      dados.movimentacoes.push({ id: generateID(), tipo, categoria, descricao, quantidade, valor, data });
+      dados.movimentacoes.push({ id: generateID(), tipo, clienteId, categoria, descricao, quantidade, valor, data });
       saveData();
       renderAll();
       showToast('Registro adicionado com sucesso!');
@@ -537,6 +745,19 @@
       form.reset();
       document.getElementById('data').value = todayISO();
       toggleFormFields('form-registro');
+    }
+
+    function addCliente(e) {
+      e.preventDefault();
+      const nome = document.getElementById('cliente-nome').value.trim();
+      const telefone = document.getElementById('cliente-telefone').value.trim();
+      const observacao = document.getElementById('cliente-obs').value.trim();
+      
+      dados.clientes.push({ id: generateID(), nome, telefone, observacao });
+      saveData();
+      renderClientes();
+      document.getElementById('form-cliente').reset();
+      showToast('Cliente cadastrado com sucesso!');
     }
 
     function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -548,11 +769,25 @@
 
       document.getElementById('edit-id').value = item.id;
       document.getElementById('edit-tipo').value = item.tipo;
+      document.getElementById('edit-cliente-mov').value = item.clienteId || '';
       document.getElementById('edit-descricao').value = item.descricao;
-      document.getElementById('edit-categoria').value = item.categoria || '';
       document.getElementById('edit-quantidade').value = item.quantidade || '';
       document.getElementById('edit-valor').value = formatBRL(item.valor);
       document.getElementById('edit-data').value = item.data;
+
+      const editSelect = document.getElementById('edit-categoria');
+      const opts = Array.from(editSelect.options).map(o => o.value);
+      if (item.categoria && opts.includes(item.categoria)) {
+          editSelect.value = item.categoria;
+          document.getElementById('edit-nova-categoria').classList.add('hidden');
+      } else if (item.categoria) {
+          editSelect.value = 'nova';
+          const inputNew = document.getElementById('edit-nova-categoria');
+          inputNew.classList.remove('hidden');
+          inputNew.value = item.categoria;
+      } else {
+          editSelect.value = '';
+      }
 
       toggleFormFields('form-edit');
       openModal('modal-editar');
@@ -565,6 +800,9 @@
       if (itemIndex === -1) return;
 
       const form = document.getElementById('form-edit');
+      let categoria = form.querySelector('[name="categoria"]').value;
+      if (categoria === 'nova') categoria = document.getElementById('edit-nova-categoria').value.trim();
+
       const valorStr = form.querySelector('#edit-valor').value;
       const valor = parseCurrency(valorStr);
 
@@ -573,7 +811,8 @@
       dados.movimentacoes[itemIndex] = {
         id: id,
         tipo: form.querySelector('#edit-tipo').value,
-        categoria: form.querySelector('#edit-categoria').value,
+        clienteId: form.querySelector('[name="clienteId"]').value,
+        categoria: categoria,
         descricao: form.querySelector('#edit-descricao').value.trim(),
         quantidade: parseInt(form.querySelector('#edit-quantidade').value, 10) || 0,
         valor: valor,
@@ -598,6 +837,103 @@
       renderAll();
       closeModal('modal-excluir');
       showToast('Registro excluído!');
+    }
+
+    function openEditClienteModal(id) {
+      const cliente = dados.clientes.find(c => c.id === id);
+      if(!cliente) return;
+      document.getElementById('edit-cliente-id').value = cliente.id;
+      document.getElementById('edit-cliente-nome').value = cliente.nome;
+      document.getElementById('edit-cliente-telefone').value = cliente.telefone || '';
+      document.getElementById('edit-cliente-obs').value = cliente.observacao || '';
+      openModal('modal-editar-cliente');
+    }
+
+    function saveEditCliente(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-cliente-id').value;
+      const idx = dados.clientes.findIndex(c => c.id === id);
+      if(idx === -1) return;
+      
+      dados.clientes[idx] = {
+        id: id,
+        nome: document.getElementById('edit-cliente-nome').value.trim(),
+        telefone: document.getElementById('edit-cliente-telefone').value.trim(),
+        observacao: document.getElementById('edit-cliente-obs').value.trim()
+      };
+      
+      saveData();
+      renderClientes();
+      renderAll(); 
+      closeModal('modal-editar-cliente');
+      showToast('Cliente atualizado com sucesso!');
+    }
+
+    function openDeleteClienteModal(id) {
+      document.getElementById('delete-cliente-id').value = id;
+      openModal('modal-excluir-cliente');
+    }
+
+    function confirmDeleteCliente() {
+      const id = document.getElementById('delete-cliente-id').value;
+      dados.clientes = dados.clientes.filter(c => c.id !== id);
+      
+      dados.movimentacoes.forEach(m => {
+         if(m.clienteId === id) m.clienteId = "";
+      });
+      
+      saveData();
+      renderClientes();
+      renderAll();
+      closeModal('modal-excluir-cliente');
+      showToast('Cliente excluído!');
+    }
+
+    function exportBackup() {
+      if (dados.movimentacoes.length === 0 && dados.clientes.length === 0) {
+        showToast('Nenhum dado para exportar.', 'error');
+        return;
+      }
+      const jsonStr = JSON.stringify(dados, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup_belavista_${todayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Backup exportado com sucesso!');
+    }
+
+    function importBackup() {
+      const fileInput = document.getElementById('import-file');
+      const file = fileInput.files[0];
+      if (!file) {
+        showToast('Por favor, selecione um arquivo JSON.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (importedData && Array.isArray(importedData.movimentacoes)) {
+            if(!importedData.clientes) importedData.clientes = [];
+            dados = importedData;
+            saveData();
+            renderAll();
+            renderClientes();
+            showToast('Backup restaurado com sucesso!');
+            fileInput.value = '';
+          } else {
+            showToast('Formato de arquivo inválido.', 'error');
+          }
+        } catch (error) {
+          showToast('Erro ao ler o arquivo JSON.', 'error');
+        }
+      };
+      reader.readAsText(file);
     }
 
     window.onload = () => {
