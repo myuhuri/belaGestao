@@ -4,36 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>BelaVista - Vendas</title>
-
-  <!-- PWA Meta Tags -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#373928">
-  <link rel="icon" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icone.png">
+  <link rel="apple-touch-icon" href="icone.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  
-  <!-- Fonte Moderna do Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* =========================================================
-       1. VARIÁVEIS CSS (TEMA CLARO E ESCURO)
-       ========================================================= */
     :root {
-      /* Paleta Obrigatória */
       --olive-light: #8f9569;
       --olive-dark: #373928;
-      
-      /* Cores Funcionais */
       --danger: #e67c73;
       --danger-bg: #fce8e6;
       --success: #579d71;
       --success-bg: #e6f4ea;
-
-      /* Tema Claro (Default) */
       --bg-color: #f7f9f4;
       --surface: #ffffff;
       --text-main: #2d302a;
@@ -42,9 +30,7 @@
       --input-bg: #ffffff;
       --shadow: 0 4px 20px rgba(55, 57, 40, 0.08);
     }
-
     [data-theme="dark"] {
-      /* Tema Escuro */
       --bg-color: #161712;
       --surface: #22241c;
       --text-main: #f0f2eb;
@@ -55,458 +41,157 @@
       --success-bg: rgba(87, 157, 113, 0.15);
       --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
-
-    /* =========================================================
-       2. RESET E ESTILOS GERAIS
-       ========================================================= */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      padding-bottom: 80px;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 24px 16px;
-    }
-
-    /* =========================================================
-       3. CABEÇALHO E MODO ESCURO
-       ========================================================= */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-    }
-
-    .logo-container h1 {
-      color: var(--olive-dark);
-      font-size: 24px;
-      font-weight: 700;
-    }
-    
-    [data-theme="dark"] .logo-container h1 {
-      color: var(--olive-light);
-    }
-
-    .logo-container p {
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-
-    .theme-toggle {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    /* =========================================================
-       4. CARDS DE RESUMO (DASHBOARD)
-       ========================================================= */
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .card {
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-
-    .card.highlight {
-      background: var(--olive-dark);
-      color: white;
-      border: none;
-    }
-    .card.highlight .card-title { color: rgba(255,255,255,0.8); }
-    .card.highlight .card-value { color: white; }
-
-    .card-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .card-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .val-entrada { color: var(--success); }
-    .val-saida { color: var(--danger); }
-
-    /* =========================================================
-       5. NAVEGAÇÃO POR ABAS (TABS)
-       ========================================================= */
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      background: var(--surface);
-      padding: 6px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .tab-btn.active {
-      background: var(--olive-light);
-      color: white;
-    }
-
-    .tab-content {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* =========================================================
-       6. FORMULÁRIOS E BOTÕES
-       ========================================================= */
-    .form-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-      background: var(--surface);
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-
-    .input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    input, select {
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      color: var(--text-main);
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--olive-light);
-      box-shadow: 0 0 0 3px rgba(143, 149, 105, 0.2);
-    }
-
-    button.btn-primary {
-      background: var(--olive-dark);
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      box-shadow: var(--shadow);
-    }
-    button.btn-primary:hover {
-      background: var(--olive-light);
-    }
-
-    /* =========================================================
-       7. LISTA DE HISTÓRICO
-       ========================================================= */
-    .history-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .history-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: var(--shadow);
-    }
-
-    .item-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .item-title {
-      font-weight: 600;
-      color: var(--text-main);
-      font-size: 16px;
-    }
-
-    .item-meta {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .item-values {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .item-price {
-      font-weight: 700;
-      font-size: 16px;
-    }
-
-    .item-price.entrada { color: var(--success); }
-    .item-price.saida { color: var(--danger); }
-
-    .btn-delete {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .btn-delete:hover {
-      background: var(--danger);
-      color: white;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    /* =========================================================
-       8. CONFIGURAÇÕES (BACKUP)
-       ========================================================= */
-    .settings-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: var(--shadow);
-      margin-bottom: 16px;
-    }
-
-    .settings-card h3 {
-      margin-bottom: 16px;
-      color: var(--olive-dark);
-    }
-    [data-theme="dark"] .settings-card h3 { color: var(--olive-light); }
-
-    .settings-card p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid var(--olive-dark);
-      color: var(--olive-dark);
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      display: block;
-      text-align: center;
-      text-decoration: none;
-    }
-    [data-theme="dark"] .btn-outline {
-      border-color: var(--olive-light);
-      color: var(--olive-light);
-    }
-
-    input[type="file"] {
-      padding: 10px;
-      margin-bottom: 12px;
-      width: 100%;
-    }
-
-    /* =========================================================
-       9. TOAST NOTIFICATIONS (ALERTAS)
-       ========================================================= */
-    #toast-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 9999;
-    }
-
-    .toast {
-      background: var(--surface);
-      color: var(--text-main);
-      padding: 16px 24px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      border-left: 6px solid var(--olive-light);
-      font-weight: 500;
-      font-size: 14px;
-      animation: slideIn 0.3s ease forwards;
-      opacity: 0;
-      transform: translateX(100%);
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+    .hidden { display: none !important; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .logo-container h1 { color: var(--olive-dark); font-size: 24px; font-weight: 700; transition: color 0.3s;}
+    [data-theme="dark"] .logo-container h1 { color: var(--olive-light); }
+    .logo-container p { color: var(--text-muted); font-size: 14px; }
+    .theme-toggle { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); }
+    .theme-toggle svg { width: 20px; height: 20px; fill: currentColor; }
+    .global-filter { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+    .global-filter select { padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-weight: 600; box-shadow: var(--shadow); outline: none; cursor: pointer;}
+    .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .card-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+    .card-value { font-size: 22px; font-weight: 700; color: var(--text-main); }
+    .val-entrada { color: var(--success) !important; }
+    .val-saida { color: var(--danger) !important; }
+    .chart-container { background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 32px; position: relative; height: 250px; width: 100%; }
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; background: var(--surface); padding: 6px; border-radius: 16px; box-shadow: var(--shadow); overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 12px 20px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 14px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+    .tab-btn.active { background: var(--olive-light); color: white; }
+    .tab-content { display: none; animation: fadeIn 0.3s ease; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .form-group { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--surface); padding: 24px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .input-wrapper { display: flex; flex-direction: column; gap: 6px; }
+    .full-width { grid-column: 1 / -1; }
+    label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+    input, select { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); font-size: 15px; outline: none; }
+    input:focus, select:focus { border-color: var(--olive-light); box-shadow: 0 0 0 3px rgba(143, 149, 105, 0.2); }
+    button.btn-primary { background: var(--olive-dark); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; box-shadow: var(--shadow); }
+    button.btn-primary:hover { background: var(--olive-light); }
+    .history-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+    .item-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .item-title { font-weight: 600; color: var(--text-main); font-size: 16px; }
+    .item-meta { font-size: 13px; color: var(--text-muted); }
+    .item-values { display: flex; align-items: center; gap: 12px; }
+    .item-price { font-weight: 700; font-size: 16px; text-align: right; min-width: 90px;}
+    .action-btns { display: flex; gap: 8px; }
+    .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; }
+    .btn-edit { background: var(--success-bg); color: var(--success); }
+    .btn-edit:hover { background: var(--success); color: white; }
+    .btn-delete { background: var(--danger-bg); color: var(--danger); }
+    .btn-delete:hover { background: var(--danger); color: white; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-style: italic; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content { background: var(--surface); width: 90%; max-width: 500px; border-radius: 16px; padding: 24px; transform: translateY(-20px); transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { font-size: 20px; color: var(--text-main); }
+    .btn-close { background: transparent; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-main); padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; flex: 1; }
+    #toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+    .toast { background: var(--surface); color: var(--text-main); padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-left: 6px solid var(--olive-light); font-weight: 500; font-size: 14px; animation: slideIn 0.3s ease forwards; opacity: 0; transform: translateX(100%); }
     .toast.error { border-left-color: var(--danger); }
     .toast.success { border-left-color: var(--success); }
-
-    @keyframes slideIn {
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slideOut {
-      to { opacity: 0; transform: translateX(100%); }
-    }
-
-    /* =========================================================
-       10. RESPONSIVIDADE
-       ========================================================= */
-    @media (max-width: 600px) {
-      .form-group { grid-template-columns: 1fr; }
-      .nav-tabs { overflow-x: auto; white-space: nowrap; }
-    }
+    @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideOut { to { opacity: 0; transform: translateX(100%); } }
+    @media (max-width: 600px) { .form-group { grid-template-columns: 1fr; } .item-values { flex-direction: column; align-items: flex-end; gap: 6px; } }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <!-- Cabeçalho -->
     <header>
       <div class="logo-container">
         <h1>BelaVista</h1>
-        <p>Controle de Vendas de Ovos</p>
+        <p>Controle de Vendas</p>
       </div>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Alternar Tema">☀️</button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Alternar Tema">
+        <svg id="icon-sun" viewBox="0 0 24 24" class="hidden"><path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2V3c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1zm0 14v4c0 .55-.45 1-1 1s-1-.45-1-1v-4c0-.55.45-1 1-1s1 .45 1 1zm8.5-9.5h-4c-.55 0-1 .45-1 1s.45 1 1 1h4c.55 0 1-.45 1-1s-.45-1-1-1zm-15 0h-4c-.55 0-1 .45-1 1s.45 1 1 1h4c.55 0 1-.45 1-1s-.45-1-1-1zm12.37-6.37l-2.83 2.83c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.83-2.83c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0zm-11.32 11.32l-2.83 2.83c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.83-2.83c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0zm11.32 0c-.39-.39-1.02-.39-1.41 0l-2.83 2.83c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.83-2.83c.39-.39.39-1.02 0-1.41zm-11.32-11.32c-.39-.39-1.02-.39-1.41 0l-2.83 2.83c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.83-2.83c.39-.39.39-1.02 0-1.41z"/></svg>
+        <svg id="icon-moon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
     </header>
 
-    <!-- Cards de Resumo -->
+    <div class="global-filter">
+      <select id="filtro-mes" onchange="renderAll()">
+        <option value="todos">Todos os Meses</option>
+      </select>
+    </div>
+
     <div class="dashboard">
       <div class="card">
-        <div class="card-title">Total Entradas</div>
+        <div class="card-title">Ovos Vendidos</div>
+        <div class="card-value" id="resumo-ovos">0</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Receita (Entradas)</div>
         <div class="card-value val-entrada" id="resumo-entradas">R$ 0,00</div>
       </div>
       <div class="card">
-        <div class="card-title">Total Saídas</div>
+        <div class="card-title">Despesas (Saídas)</div>
         <div class="card-value val-saida" id="resumo-saidas">R$ 0,00</div>
       </div>
-      <div class="card highlight">
-        <div class="card-title">Saldo Atual</div>
-        <div class="card-value" id="resumo-saldo">R$ 0,00</div>
+      <div class="card">
+        <div class="card-title">Lucro Líquido</div>
+        <div class="card-value" id="resumo-lucro">R$ 0,00</div>
       </div>
     </div>
 
-    <!-- Navegação em Abas -->
+    <div class="chart-container">
+      <canvas id="meuGrafico"></canvas>
+    </div>
+
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('tab-registrar')">Registrar</button>
       <button class="tab-btn" onclick="switchTab('tab-historico')">Histórico</button>
-      <button class="tab-btn" onclick="switchTab('tab-config')">Configurações</button>
     </div>
 
-    <!-- ABA 1: REGISTRAR -->
     <div id="tab-registrar" class="tab-content active">
       <form id="form-registro" class="form-group" onsubmit="addEntry(event)">
-        
         <div class="input-wrapper full-width">
           <label for="tipo-mov">Tipo de Movimentação</label>
-          <select id="tipo-mov" required>
+          <select id="tipo-mov" name="tipo" onchange="toggleFormFields('form-registro')" required>
             <option value="entrada">Entrada (Venda)</option>
             <option value="saida">Saída (Despesa)</option>
           </select>
         </div>
 
+        <div class="input-wrapper wrap-categoria hidden">
+          <label for="categoria-mov">Categoria</label>
+          <select id="categoria-mov" name="categoria">
+            <option value="" disabled selected>Selecione...</option>
+            <option value="Ração">Ração</option>
+            <option value="Embalagem">Embalagem</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
         <div class="input-wrapper full-width">
           <label for="descricao">Descrição</label>
-          <input type="text" id="descricao" placeholder="Ex: Venda de 30 dúzias" required>
+          <input type="text" id="descricao" name="descricao" placeholder="Ex: Venda para Mercado Z" required>
         </div>
 
-        <div class="input-wrapper">
+        <div class="input-wrapper wrap-quantidade">
           <label for="quantidade">Qtd de Ovos</label>
-          <input type="number" id="quantidade" placeholder="Ex: 360" min="1" required>
+          <input type="number" id="quantidade" name="quantidade" placeholder="Ex: 360" min="1">
         </div>
 
         <div class="input-wrapper">
-          <label for="valor">Valor Total (R$)</label>
-          <input type="number" id="valor" placeholder="0.00" step="0.01" min="0" required>
+          <label for="valor">Valor Total</label>
+          <input type="text" id="valor" name="valor" class="input-money" placeholder="R$ 0,00" required>
         </div>
 
         <div class="input-wrapper full-width">
           <label for="data">Data</label>
-          <input type="date" id="data" required>
+          <input type="date" id="data" name="data" required>
         </div>
 
         <div class="full-width">
@@ -515,61 +200,99 @@
       </form>
     </div>
 
-    <!-- ABA 2: HISTÓRICO -->
     <div id="tab-historico" class="tab-content">
-      <ul class="history-list" id="lista-historico">
-        <!-- Itens inseridos via JS -->
-      </ul>
-      <div id="empty-state" class="empty-state" style="display:none;">
-        Nenhuma movimentação registrada.
-      </div>
+      <ul class="history-list" id="lista-historico"></ul>
+      <div id="empty-state" class="empty-state" style="display:none;">Nenhuma movimentação para o período selecionado.</div>
     </div>
-
-    <!-- ABA 3: CONFIGURAÇÕES / SEGURANÇA -->
-    <div id="tab-config" class="tab-content">
-      <div class="settings-card">
-        <h3>Exportar Dados</h3>
-        <p>Faça o download de um arquivo JSON contendo todas as suas movimentações. Ideal para backup de segurança.</p>
-        <button class="btn-outline" onclick="exportBackup()">Exportar backup.json</button>
-      </div>
-
-      <div class="settings-card">
-        <h3>Restaurar Dados</h3>
-        <p>Selecione um arquivo de backup (JSON) previamente salvo para restaurar suas informações.</p>
-        <input type="file" id="import-file" accept=".json">
-        <button class="btn-primary" onclick="importBackup()">Restaurar Backup</button>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Container de Alertas (Toasts) -->
+  <div class="modal-overlay" id="modal-editar">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Editar Registro</h2>
+        <button class="btn-close" onclick="closeModal('modal-editar')">&times;</button>
+      </div>
+      <form id="form-edit" class="form-group" style="padding:0; border:none; box-shadow:none; grid-template-columns: 1fr;" onsubmit="saveEdit(event)">
+        <input type="hidden" id="edit-id">
+        <div class="input-wrapper">
+          <label>Tipo</label>
+          <select id="edit-tipo" name="tipo" onchange="toggleFormFields('form-edit')" required>
+            <option value="entrada">Entrada (Venda)</option>
+            <option value="saida">Saída (Despesa)</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper wrap-categoria hidden">
+          <label>Categoria</label>
+          <select id="edit-categoria" name="categoria">
+            <option value="Ração">Ração</option>
+            <option value="Embalagem">Embalagem</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper">
+          <label>Descrição</label>
+          <input type="text" id="edit-descricao" name="descricao" required>
+        </div>
+
+        <div class="input-wrapper wrap-quantidade">
+          <label>Qtd de Ovos</label>
+          <input type="number" id="edit-quantidade" name="quantidade" min="1">
+        </div>
+
+        <div class="input-wrapper">
+          <label>Valor Total</label>
+          <input type="text" id="edit-valor" name="valor" class="input-money" required>
+        </div>
+
+        <div class="input-wrapper">
+          <label>Data</label>
+          <input type="date" id="edit-data" name="data" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-excluir">
+    <div class="modal-content" style="max-width: 350px; text-align: center;">
+      <h3 style="margin-bottom: 10px;">Excluir Registro?</h3>
+      <p style="color: var(--text-muted); font-size: 14px;">Essa ação não pode ser desfeita.</p>
+      <input type="hidden" id="delete-id">
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-excluir')">Cancelar</button>
+        <button class="btn-primary" style="background: var(--danger);" onclick="confirmDelete()">Sim, Excluir</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-container"></div>
 
-  <!-- =========================================================
-       11. LÓGICA JAVASCRIPT
-       ========================================================= -->
   <script>
-    // --- Estado da Aplicação ---
-    const STORAGE_KEY = 'bela-vista-dados'; // Chave original
+    const STORAGE_KEY = 'bela-vista-dados';
     let dados = { movimentacoes: [] };
+    let chartInstance = null;
 
-    // --- Funções Utilitárias ---
-    function todayISO() {
-      return new Date().toISOString().slice(0, 10);
+    function applyCurrencyMask() {
+      const moneyInputs = document.querySelectorAll('.input-money');
+      moneyInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, ''); 
+          if (!value) { e.target.value = ''; return; }
+          value = (parseInt(value, 10) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          e.target.value = value;
+        });
+      });
     }
 
-    function formatBRL(value) {
-      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      return dateStr.split('-').reverse().join('/');
-    }
-
-    function generateID() {
-      return 'id_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+    function parseCurrency(str) {
+      if (typeof str === 'number') return str;
+      if (!str) return 0;
+      let cleanStr = str.replace(/[R$\s\.]/g, '').replace(',', '.');
+      return parseFloat(cleanStr) || 0;
     }
 
     function showToast(message, type = 'success') {
@@ -577,246 +300,311 @@
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
       toast.textContent = message;
-      
       container.appendChild(toast);
       
-      // Remove o toast após 3 segundos
       setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease forwards';
         setTimeout(() => toast.remove(), 300);
       }, 3000);
     }
 
-    // --- Alternância de Tema (Dark/Light) ---
+    function todayISO() { return new Date().toISOString().slice(0, 10); }
+    function generateID() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8); }
+    function formatBRL(val) { return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+    function formatDateBr(dateStr) { return dateStr ? dateStr.split('-').reverse().join('/') : ''; }
+
+    function toggleFormFields(formId) {
+      const form = document.getElementById(formId);
+      const tipo = form.querySelector('[name="tipo"]').value;
+      const wrapQtd = form.querySelector('.wrap-quantidade');
+      const inputQtd = form.querySelector('[name="quantidade"]');
+      const wrapCat = form.querySelector('.wrap-categoria');
+      const selectCat = form.querySelector('[name="categoria"]');
+
+      if (tipo === 'entrada') {
+        wrapQtd.classList.remove('hidden');
+        if(inputQtd) inputQtd.required = true;
+        wrapCat.classList.add('hidden');
+        if(selectCat) selectCat.required = false;
+      } else {
+        wrapQtd.classList.add('hidden');
+        if(inputQtd) inputQtd.required = false;
+        wrapCat.classList.remove('hidden');
+        if(selectCat) selectCat.required = true;
+      }
+    }
+
     function toggleTheme() {
       const html = document.documentElement;
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       html.setAttribute('data-theme', newTheme);
       
-      const themeBtn = document.querySelector('.theme-toggle');
-      themeBtn.textContent = newTheme === 'light' ? '☀️' : '🌙';
-      
+      document.getElementById('icon-sun').classList.toggle('hidden', newTheme === 'light');
+      document.getElementById('icon-moon').classList.toggle('hidden', newTheme === 'dark');
       localStorage.setItem('bela-vista-theme', newTheme);
+      
+      if (chartInstance) renderChart(); 
     }
 
-    // --- Alternância de Abas ---
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
       document.getElementById(tabId).classList.add('active');
     }
 
-    // --- Persistência de Dados ---
     function loadData() {
-      const theme = localStorage.getItem('bela-vista-theme');
-      if (theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        document.querySelector('.theme-toggle').textContent = theme === 'light' ? '☀️' : '🌙';
-      }
+      const theme = localStorage.getItem('bela-vista-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('icon-sun').classList.toggle('hidden', theme === 'light');
+      document.getElementById('icon-moon').classList.toggle('hidden', theme === 'dark');
 
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          // Adapta dados do sistema antigo[cite: 1] para a estrutura nova se necessário
-          if (parsed.entrada || parsed.saida) {
-            migrarDadosAntigos(parsed);
-          } else {
-            dados = parsed;
-          }
-        }
-      } catch (e) {
-        dados = { movimentacoes: [] };
-      }
+        if (raw) dados = JSON.parse(raw);
+        if(!dados.movimentacoes) dados.movimentacoes = [];
+      } catch (e) { dados = { movimentacoes: [] }; }
+      
+      populateMonthFilter();
       renderAll();
-    }
-
-    function migrarDadosAntigos(dadosAntigos) {
-      // Função para garantir compatibilidade com seu código antigo[cite: 1]
-      const movs = [];
-      if(dadosAntigos.entrada) {
-        dadosAntigos.entrada.forEach(item => movs.push({...item, tipo: 'entrada', quantidade: 0}));
-      }
-      if(dadosAntigos.saida) {
-        dadosAntigos.saida.forEach(item => movs.push({...item, tipo: 'saida', quantidade: 0}));
-      }
-      dados = { movimentacoes: movs };
-      saveData();
     }
 
     function saveData() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
-      } catch (e) {
-        showToast('Erro ao salvar no dispositivo', 'error');
-      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+      populateMonthFilter();
     }
 
-    // --- Operações CRUD ---
-    function addEntry(e) {
-      e.preventDefault();
+    function populateMonthFilter() {
+      const select = document.getElementById('filtro-mes');
+      const currentVal = select.value;
       
-      const tipo = document.getElementById('tipo-mov').value;
-      const descricao = document.getElementById('descricao').value.trim();
-      const quantidade = parseInt(document.getElementById('quantidade').value, 10);
-      const valor = parseFloat(document.getElementById('valor').value);
-      const data = document.getElementById('data').value;
-
-      if (!descricao || isNaN(valor) || isNaN(quantidade)) {
-        showToast('Preencha os campos corretamente.', 'error');
-        return;
-      }
-
-      dados.movimentacoes.push({
-        id: generateID(),
-        tipo,
-        descricao,
-        quantidade,
-        valor,
-        data
+      const months = new Set();
+      dados.movimentacoes.forEach(m => months.add(m.data.substring(0, 7)));
+      
+      select.innerHTML = '<option value="todos">Todos os Meses</option>';
+      
+      Array.from(months).sort().reverse().forEach(month => {
+        const [yy, mm] = month.split('-');
+        const nomeMes = new Date(yy, mm - 1).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+        const label = nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+        select.innerHTML += `<option value="${month}">${label}</option>`;
       });
 
-      saveData();
-      renderAll();
-      showToast('Movimentação registrada com sucesso!');
-      
-      document.getElementById('form-registro').reset();
-      document.getElementById('data').value = todayISO();
-    }
-
-    function removeEntry(id) {
-      if (confirm('Tem certeza que deseja excluir este registro?')) {
-        dados.movimentacoes = dados.movimentacoes.filter(m => m.id !== id);
-        saveData();
-        renderAll();
-        showToast('Registro excluído!');
+      if (Array.from(select.options).some(opt => opt.value === currentVal)) {
+        select.value = currentVal;
       }
     }
 
-    // --- Renderização da UI ---
+    function getFilteredData() {
+      const filter = document.getElementById('filtro-mes').value;
+      if (filter === 'todos') return [...dados.movimentacoes];
+      return dados.movimentacoes.filter(m => m.data.startsWith(filter));
+    }
+
     function renderAll() {
+      const filtered = getFilteredData().sort((a,b) => b.data.localeCompare(a.data));
+      
+      let totalEntradas = 0, totalSaidas = 0, totalOvos = 0;
       const lista = document.getElementById('lista-historico');
-      const emptyState = document.getElementById('empty-state');
-      
-      let totalEntradas = 0;
-      let totalSaidas = 0;
-
-      // Limpa lista
       lista.innerHTML = '';
-      
-      // Ordena por data decrescente
-      const movsSorted = [...dados.movimentacoes].sort((a,b) => (b.data || '').localeCompare(a.data || ''));
 
-      if (movsSorted.length === 0) {
-        emptyState.style.display = 'block';
+      if (filtered.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
       } else {
-        emptyState.style.display = 'none';
+        document.getElementById('empty-state').style.display = 'none';
         
-        movsSorted.forEach(item => {
-          if (item.tipo === 'entrada') totalEntradas += item.valor;
-          else totalSaidas += item.valor;
+        filtered.forEach(item => {
+          if (item.tipo === 'entrada') {
+            totalEntradas += item.valor;
+            totalOvos += parseInt(item.quantidade) || 0;
+          } else {
+            totalSaidas += item.valor;
+          }
+
+          const isEntrada = item.tipo === 'entrada';
+          const sinal = isEntrada ? '+' : '−';
+          const classe = isEntrada ? 'entrada' : 'saida';
+          const catLabel = item.categoria ? ` • ${item.categoria}` : '';
+          const infoAdd = isEntrada ? `${item.quantidade} ovos` : `Despesa${catLabel}`;
 
           const li = document.createElement('li');
           li.className = 'history-item';
-          
-          const isEntrada = item.tipo === 'entrada';
-          const sinal = isEntrada ? '+' : '−';
-          const classePreco = isEntrada ? 'entrada' : 'saida';
-          // Adapta se vier do sistema antigo (onde a chave era "nome" e não "descricao")[cite: 1]
-          const labelNome = item.descricao || item.nome; 
-
           li.innerHTML = `
             <div class="item-info">
-              <span class="item-title">${labelNome}</span>
-              <span class="item-meta">
-                ${formatDate(item.data)} • ${item.quantidade > 0 ? item.quantidade + ' ovos' : 'Sem qtd definida'}
-              </span>
+              <span class="item-title">${item.descricao}</span>
+              <span class="item-meta">${formatDateBr(item.data)} • ${infoAdd}</span>
             </div>
             <div class="item-values">
-              <span class="item-price ${classePreco}">${sinal} ${formatBRL(item.valor)}</span>
-              <button class="btn-delete" title="Excluir" onclick="removeEntry('${item.id}')">✕</button>
+              <span class="item-price ${classe}">${sinal} ${formatBRL(item.valor)}</span>
+              <div class="action-btns">
+                <button class="btn-icon btn-edit" title="Editar" onclick="openEditModal('${item.id}')">✎</button>
+                <button class="btn-icon btn-delete" title="Excluir" onclick="openDeleteModal('${item.id}')">✕</button>
+              </div>
             </div>
           `;
           lista.appendChild(li);
         });
       }
 
-      // Atualiza Cards
-      const saldo = totalEntradas - totalSaidas;
+      const lucro = totalEntradas - totalSaidas;
+      document.getElementById('resumo-ovos').textContent = totalOvos;
       document.getElementById('resumo-entradas').textContent = formatBRL(totalEntradas);
       document.getElementById('resumo-saidas').textContent = formatBRL(totalSaidas);
-      document.getElementById('resumo-saldo').textContent = formatBRL(saldo);
+      
+      const elLucro = document.getElementById('resumo-lucro');
+      elLucro.textContent = formatBRL(lucro);
+      elLucro.className = `card-value ${lucro >= 0 ? 'val-entrada' : 'val-saida'}`;
+
+      renderChart(filtered);
     }
 
-    // --- Funcionalidades de Segurança (Backup) ---
-    function exportBackup() {
-      if (dados.movimentacoes.length === 0) {
-        showToast('Não há dados para exportar.', 'error');
-        return;
-      }
+    function renderChart(filteredData) {
+      if(!filteredData) filteredData = getFilteredData();
+      const isAll = document.getElementById('filtro-mes').value === 'todos';
       
-      const jsonStr = JSON.stringify(dados, null, 2);
-      const blob = new Blob([jsonStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `backup_belavista_${todayISO()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      showToast('Backup exportado com sucesso!');
-    }
+      const groups = {};
+      filteredData.forEach(m => {
+        const key = isAll ? m.data.substring(0, 7) : m.data; 
+        if (!groups[key]) groups[key] = { rec: 0, des: 0 };
+        if (m.tipo === 'entrada') groups[key].rec += m.valor;
+        else groups[key].des += m.valor;
+      });
 
-    function importBackup() {
-      const fileInput = document.getElementById('import-file');
-      const file = fileInput.files[0];
+      const labels = Object.keys(groups).sort();
+      const recData = labels.map(k => groups[k].rec);
+      const desData = labels.map(k => groups[k].des);
       
-      if (!file) {
-        showToast('Por favor, selecione um arquivo JSON.', 'error');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const importedData = JSON.parse(e.target.result);
-          
-          if (!importedData || !Array.isArray(importedData.movimentacoes)) {
-            // Verifica se é o formato antigo
-            if(importedData.entrada || importedData.saida) {
-               migrarDadosAntigos(importedData);
-               showToast('Dados antigos importados e convertidos com sucesso!', 'success');
-               fileInput.value = '';
-               return;
-            }
-            throw new Error("Formato inválido");
-          }
-
-          dados = importedData;
-          saveData();
-          renderAll();
-          
-          showToast('Backup restaurado com sucesso!', 'success');
-          fileInput.value = ''; // Limpa o input
-        } catch (error) {
-          showToast('Erro ao ler o arquivo. JSON inválido.', 'error');
+      const chartLabels = labels.map(l => {
+        if(isAll) {
+           const [yy, mm] = l.split('-');
+           return `${mm}/${yy}`;
         }
-      };
-      
-      reader.readAsText(file);
+        return formatDateBr(l).substring(0, 5);
+      });
+
+      const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim();
+      const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+
+      if (chartInstance) chartInstance.destroy();
+
+      const ctx = document.getElementById('meuGrafico').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar', 
+        data: {
+          labels: chartLabels,
+          datasets: [
+            { label: 'Receitas', data: recData, backgroundColor: '#579d71', borderRadius: 4 },
+            { label: 'Despesas', data: desData, backgroundColor: '#e67c73', borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          color: textColor,
+          plugins: { legend: { labels: { color: textColor } } },
+          scales: {
+            x: { ticks: { color: textColor }, grid: { display: false } }, 
+            y: { 
+              beginAtZero: true, 
+              ticks: { color: textColor }, 
+              grid: { color: gridColor } 
+            }
+          }
+        }
+      });
     }
 
-    // --- Inicialização ---
+    function addEntry(e) {
+      e.preventDefault();
+      const form = document.getElementById('form-registro');
+      
+      const tipo = form.querySelector('[name="tipo"]').value;
+      const descricao = form.querySelector('[name="descricao"]').value.trim();
+      const categoria = form.querySelector('[name="categoria"]').value;
+      const quantidade = parseInt(form.querySelector('[name="quantidade"]').value, 10) || 0;
+      const valorStr = form.querySelector('[name="valor"]').value;
+      const data = form.querySelector('[name="data"]').value;
+      const valor = parseCurrency(valorStr);
+
+      if (valor <= 0) { showToast('Valor deve ser maior que zero.', 'error'); return; }
+
+      dados.movimentacoes.push({ id: generateID(), tipo, categoria, descricao, quantidade, valor, data });
+      saveData();
+      renderAll();
+      showToast('Registro adicionado com sucesso!');
+      
+      form.reset();
+      document.getElementById('data').value = todayISO();
+      toggleFormFields('form-registro');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function openEditModal(id) {
+      const item = dados.movimentacoes.find(m => m.id === id);
+      if(!item) return;
+
+      document.getElementById('edit-id').value = item.id;
+      document.getElementById('edit-tipo').value = item.tipo;
+      document.getElementById('edit-descricao').value = item.descricao;
+      document.getElementById('edit-categoria').value = item.categoria || '';
+      document.getElementById('edit-quantidade').value = item.quantidade || '';
+      document.getElementById('edit-valor').value = formatBRL(item.valor);
+      document.getElementById('edit-data').value = item.data;
+
+      toggleFormFields('form-edit');
+      openModal('modal-editar');
+    }
+
+    function saveEdit(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-id').value;
+      const itemIndex = dados.movimentacoes.findIndex(m => m.id === id);
+      if (itemIndex === -1) return;
+
+      const form = document.getElementById('form-edit');
+      const valorStr = form.querySelector('#edit-valor').value;
+      const valor = parseCurrency(valorStr);
+
+      if (valor <= 0) { showToast('Valor deve ser maior que zero.', 'error'); return; }
+
+      dados.movimentacoes[itemIndex] = {
+        id: id,
+        tipo: form.querySelector('#edit-tipo').value,
+        categoria: form.querySelector('#edit-categoria').value,
+        descricao: form.querySelector('#edit-descricao').value.trim(),
+        quantidade: parseInt(form.querySelector('#edit-quantidade').value, 10) || 0,
+        valor: valor,
+        data: form.querySelector('#edit-data').value
+      };
+
+      saveData();
+      renderAll();
+      closeModal('modal-editar');
+      showToast('Registro atualizado com sucesso!');
+    }
+
+    function openDeleteModal(id) {
+      document.getElementById('delete-id').value = id;
+      openModal('modal-excluir');
+    }
+
+    function confirmDelete() {
+      const id = document.getElementById('delete-id').value;
+      dados.movimentacoes = dados.movimentacoes.filter(m => m.id !== id);
+      saveData();
+      renderAll();
+      closeModal('modal-excluir');
+      showToast('Registro excluído!');
+    }
+
     window.onload = () => {
       document.getElementById('data').value = todayISO();
+      applyCurrencyMask();
       loadData();
+      toggleFormFields('form-registro');
     };
   </script>
 </body>
